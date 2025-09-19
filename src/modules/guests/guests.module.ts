@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { GuestsController } from './controllers/guests.controller';
-import { GuestsService } from './services/guests.service';
-import { Guest } from './entities/guest.entity';
+import { GuestsController } from './guests.controller';
+import { GuestsService } from './guests.service';
+import { Guest } from './guest.entity';
 import { EventsModule } from '../events/events.module';
 
 @Module({

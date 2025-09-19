@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AnalyticsController } from './controllers/analytics.controller';
-import { AnalyticsService } from './services/analytics.service';
-import { Event } from '@/modules/events/entities/event.entity';
-import { Guest } from '@/modules/guests/entities/guest.entity';
+import { AnalyticsController } from './analytics.controller';
+import { AnalyticsService } from './analytics.service';
+import { Event } from '@/modules/events/event.entity';
+import { Guest } from '@/modules/guests/guest.entity';
 import { EventsModule } from '../events/events.module';
 import { GuestsModule } from '../guests/guests.module';
 

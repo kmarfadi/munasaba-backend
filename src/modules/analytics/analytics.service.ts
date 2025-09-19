@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
-import { Event } from '@/modules/events/entities/event.entity';
-import { Guest } from '@/modules/guests/entities/guest.entity';
+import { Event } from '@/modules/events/event.entity';
+import { Guest } from '@/modules/guests/guest.entity';
 
 @Injectable()
 export class AnalyticsService {

@@ -10,9 +10,9 @@ import {
   Request,
   Query
 } from '@nestjs/common';
-import { EventsService } from '../services/events.service';
-import { CreateEventDto } from '../dto/create-event.dto';
-import { UpdateEventDto } from '../dto/update-event.dto';
+import { EventsService } from './events.service';
+import { CreateEventDto } from './dto/create-event.dto';
+import { UpdateEventDto } from './dto/update-event.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 
 @Controller('events')

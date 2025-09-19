@@ -3,13 +3,13 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { AuthModule } from '@/modules/auth/auth.module';
+import { AuthModule } from '@/modules/user/auth/auth.module';
 import { EventsModule } from '@/modules/events/events.module';
 import { GuestsModule } from '@/modules/guests/guests.module';
 import { AnalyticsModule } from '@/modules/analytics/analytics.module';
-import { User } from '@/modules/auth/entities/user.entity';
-import { Event } from '@/modules/events/entities/event.entity';
-import { Guest } from '@/modules/guests/entities/guest.entity';
+import { User } from '@/modules/user/auth/entities/user.entity';
+import { Event } from '@/modules/events/event.entity';
+import { Guest } from '@/modules/guests/guest.entity';
 import { LoggingMiddleware } from './common/middleware/logging.middleware';
 
 @Module({

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Guest } from '../entities/guest.entity';
-import { CreateGuestDto } from '../dto/create-guest.dto';
-import { UpdateGuestDto } from '../dto/update-guest.dto';
+import { Guest } from './guest.entity';
+import { CreateGuestDto } from './dto/create-guest.dto';
+import { UpdateGuestDto } from './dto/update-guest.dto';
 
 @Injectable()
 export class GuestsService {

@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
 import { join } from 'path';
-import { User } from '../../modules/auth/entities/user.entity';
-import { Event } from '../../modules/events/entities/event.entity';
-import { Guest } from '../../modules/guests/entities/guest.entity';
+import { User } from '../../modules/user/auth/entities/user.entity';
+import { Event } from '../../modules/events/event.entity';
+import { Guest } from '../../modules/guests/guest.entity';
 import * as bcrypt from 'bcryptjs';
 
 config();
@@ -16,9 +16,9 @@ const AppDataSource = new DataSource({
   password: process.env.DB_PASSWORD || 'password',
   database: process.env.DB_DATABASE || 'munasaba',
   entities: [
-    join(__dirname, '../../modules/auth/entities/*.entity{.ts,.js}'),
-    join(__dirname, '../../modules/events/entities/*.entity{.ts,.js}'),
-    join(__dirname, '../../modules/guests/entities/*.entity{.ts,.js}'),
+    join(__dirname, '../../modules/user/auth/entities/*.entity{.ts,.js}'),
+    join(__dirname, '../../modules/events/*.entity{.ts,.js}'),
+    join(__dirname, '../../modules/guests/*.entity{.ts,.js}'),
   ],
   synchronize: false,
   logging: true,

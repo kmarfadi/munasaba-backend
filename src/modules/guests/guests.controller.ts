@@ -10,9 +10,9 @@ import {
   Request,
   Query
 } from '@nestjs/common';
-import { GuestsService } from '../services/guests.service';
-import { CreateGuestDto } from '../dto/create-guest.dto';
-import { UpdateGuestDto } from '../dto/update-guest.dto';
+import { GuestsService } from './guests.service';
+import { CreateGuestDto } from './dto/create-guest.dto';
+import { UpdateGuestDto } from './dto/update-guest.dto';
 import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
 
 @Controller('guests')
