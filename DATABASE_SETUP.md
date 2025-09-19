@@ -109,3 +109,4 @@ Environment variables:
 - `DB_USERNAME` (default: postgres)
 - `DB_PASSWORD` (default: password)
 - `DB_DATABASE` (default: munasaba)
+

@@ -32,3 +32,4 @@ export class AnalyticsController {
     return this.analyticsService.getAttendanceTrends(userId, period);
   }
 }
+

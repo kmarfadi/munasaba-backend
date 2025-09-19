@@ -25,3 +25,4 @@ export class CreateGuestDto {
   @IsOptional()
   notes?: string;
 }
+

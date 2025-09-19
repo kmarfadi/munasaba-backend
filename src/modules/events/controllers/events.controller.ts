@@ -50,3 +50,4 @@ export class EventsController {
     return this.eventsService.getEventGuests(id);
   }
 }
+
