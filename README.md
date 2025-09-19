@@ -1,98 +1,203 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Munasaba Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A comprehensive event management system built with NestJS, featuring user authentication, event management, guest tracking, and analytics.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- 🔐 **User Authentication** - JWT-based authentication with local strategy
+- 📅 **Event Management** - Create, update, and manage events
+- 👥 **Guest Management** - Track guests, check-ins, and check-outs
+- 📊 **Analytics Dashboard** - Comprehensive event and attendance analytics
+- 🛡️ **Security** - Global exception handling and request logging
+- 🗄️ **Database** - PostgreSQL with TypeORM
+- 🐳 **Docker Support** - Containerized deployment
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech Stack
 
-## Project setup
+- **Framework**: NestJS
+- **Database**: PostgreSQL
+- **ORM**: TypeORM
+- **Authentication**: JWT + Passport
+- **Validation**: Class-validator
+- **Containerization**: Docker
 
-```bash
-$ npm install
+## Project Structure
+
+```
+src/
+├── common/                       # Shared utilities
+│   ├── filters/                  # Global exception filters
+│   ├── guards/                   # Authentication guards
+│   ├── interceptors/             # Logging interceptors
+│   ├── middleware/               # Request logging middleware
+│   └── utils/                    # Utility functions
+├── config/                       # Configuration files
+├── database/                     # Database setup
+│   ├── migrations/               # Database migrations
+│   └── seeders/                  # Database seeders
+└── modules/                      # Feature modules
+    ├── analytics/                # Analytics module
+    │   ├── analytics.controller.ts
+    │   ├── analytics.module.ts
+    │   └── analytics.service.ts
+    ├── events/                   # Events module
+    │   ├── dto/                  # Data Transfer Objects
+    │   │   ├── create-event.dto.ts
+    │   │   └── update-event.dto.ts
+    │   ├── event.entity.ts
+    │   ├── events.controller.ts
+    │   ├── events.module.ts
+    │   └── events.service.ts
+    ├── guests/                   # Guests module
+    │   ├── dto/
+    │   │   ├── create-guest.dto.ts
+    │   │   └── update-guest.dto.ts
+    │   ├── guest.entity.ts
+    │   ├── guests.controller.ts
+    │   ├── guests.module.ts
+    │   └── guests.service.ts
+    └── user/                     # User module
+        └── auth/                 # Authentication submodule
+            ├── dto/
+            │   ├── login.dto.ts
+            │   └── register.dto.ts
+            ├── entities/
+            │   └── user.entity.ts
+            ├── strategies/
+            │   ├── jwt.strategy.ts
+            │   └── local.strategy.ts
+            ├── auth.controller.ts
+            ├── auth.module.ts
+            └── auth.service.ts
 ```
 
-## Compile and run the project
+## Installation
 
 ```bash
-# development
-$ npm run start
+# Install dependencies
+$ npm install
 
-# watch mode
+# Set up environment variables
+$ cp .env.example .env
+# Edit .env with your database credentials
+```
+
+## Database Setup
+
+```bash
+# Run database migrations
+$ npm run migration:run
+
+# Seed the database (optional)
+$ npm run seed
+```
+
+## Running the Application
+
+```bash
+# Development mode
 $ npm run start:dev
 
-# production mode
+# Production mode
 $ npm run start:prod
+
+# Build the application
+$ npm run build
 ```
 
-## Run tests
+## API Endpoints
+
+### Authentication (`/api/user/auth`)
+- `POST /api/user/auth/register` - Register a new user
+- `POST /api/user/auth/login` - Login user
+- `GET /api/user/auth/profile` - Get user profile (protected)
+
+### Events (`/api/events`)
+- `GET /api/events` - Get all events
+- `POST /api/events` - Create a new event (protected)
+- `GET /api/events/:id` - Get event by ID
+- `PATCH /api/events/:id` - Update event (protected)
+- `DELETE /api/events/:id` - Delete event (protected)
+
+### Guests (`/api/guests`)
+- `GET /api/guests` - Get all guests
+- `POST /api/guests` - Create a new guest (protected)
+- `GET /api/guests/:id` - Get guest by ID
+- `PATCH /api/guests/:id` - Update guest (protected)
+- `DELETE /api/guests/:id` - Delete guest (protected)
+- `POST /api/guests/:id/checkin` - Check-in guest (protected)
+- `POST /api/guests/:id/checkout` - Check-out guest (protected)
+
+### Analytics (`/api/analytics`)
+- `GET /api/analytics/dashboard` - Get dashboard statistics (protected)
+- `GET /api/analytics/events/stats` - Get event statistics (protected)
+- `GET /api/analytics/guests/stats` - Get guest statistics (protected)
+- `GET /api/analytics/events/:id/analytics` - Get event-specific analytics (protected)
+- `GET /api/analytics/attendance/trends` - Get attendance trends (protected)
+
+## Testing
 
 ```bash
-# unit tests
+# Unit tests
 $ npm run test
 
-# e2e tests
+# E2E tests
 $ npm run test:e2e
 
-# test coverage
+# Test coverage
 $ npm run test:cov
 ```
 
-## Deployment
+## Docker Support
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+The application includes Docker configuration for easy deployment:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Build and run with Docker Compose
+$ docker-compose up --build
+
+# Run in production mode
+$ docker-compose -f docker-compose.prod.yml up --build
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+## Environment Variables
 
-## Resources
+Create a `.env` file in the root directory with the following variables:
 
-Check out a few resources that may come in handy when working with NestJS:
+```env
+# Database
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=password
+DB_DATABASE=munasaba
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# JWT
+JWT_SECRET=your-secret-key
+JWT_EXPIRES_IN=7d
 
-## Support
+# Application
+PORT=3000
+NODE_ENV=development
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Logging and Error Handling
 
-## Stay in touch
+The application includes comprehensive logging and error handling:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- **Request/Response Logging**: All HTTP requests and responses are logged with timing information
+- **Global Exception Filter**: Catches and formats all unhandled exceptions
+- **Structured Logging**: Consistent log format across the application
+- **Error Tracking**: Detailed error information for debugging
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
