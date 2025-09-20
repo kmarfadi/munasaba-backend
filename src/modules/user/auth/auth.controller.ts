@@ -2,22 +2,22 @@ import { Controller, Post, Body, UseGuards, Request, Get } from '@nestjs/common'
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
-import { LocalAuthGuard } from '@/common/guards/local-auth.guard';
+import { JwtAuthGuard, SkipJwt } from '@/common';
 
 @Controller('user/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @SkipJwt()
   @Post('register')
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
-  @UseGuards(LocalAuthGuard)
+  @SkipJwt()
   @Post('login')
-  async login(@Body() loginDto: LoginDto, @Request() req) {
-    return this.authService.login(req.user);
+  async login(@Body() loginDto: LoginDto) {
+    return this.authService.login(loginDto);
   }
 
   @UseGuards(JwtAuthGuard)

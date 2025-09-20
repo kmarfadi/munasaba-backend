@@ -13,7 +13,7 @@ import {
 import { GuestsService } from './guests.service';
 import { CreateGuestDto } from './dto/create-guest.dto';
 import { UpdateGuestDto } from './dto/update-guest.dto';
-import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '@/common';
 
 @Controller('guests')
 @UseGuards(JwtAuthGuard)

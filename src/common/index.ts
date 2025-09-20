@@ -9,7 +9,9 @@ export * from './interceptors/logging.interceptor';
 
 // Guards
 export * from './guards/jwt-auth.guard';
-export * from './guards/local-auth.guard';
+
+// Decorators
+export * from './decorators/skip-jwt.decorator';
 
 // Utils
 export * from './utils/logger.util';
