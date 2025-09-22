@@ -15,3 +15,6 @@ export * from './decorators/skip-jwt.decorator';
 
 // Utils
 export * from './utils/logger.util';
+
+// Config
+export * from './config/jwt.config';

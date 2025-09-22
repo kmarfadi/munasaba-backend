@@ -17,75 +17,76 @@ export class AuthService {
 
   async register(registerDto: RegisterDto) {
     const { email, password, firstName, lastName } = registerDto;
+    
+    await this.checkEmailExists(email);
+    
+    const hashedPassword = await this.hashPassword(password);
+    const user = await this.createUser({ email, password: hashedPassword, firstName, lastName });
 
-    // Check if user already exists
-    const existingUser = await this.userRepository.findOne({ where: { email } });
-    if (existingUser) {
-      throw new ConflictException('User with this email already exists');
-    }
-
-    // Hash password
-    const hashedPassword = await bcrypt.hash(password, 12);
-
-    // Create user
-    const user = this.userRepository.create({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-    });
-
-    const savedUser = await this.userRepository.save(user);
-
-    // Generate JWT token
-    const payload = { sub: savedUser.id, email: savedUser.email };
-    const token = this.jwtService.sign(payload);
-
-    return {
-      user: {
-        id: savedUser.id,
-        email: savedUser.email,
-        firstName: savedUser.firstName,
-        lastName: savedUser.lastName,
-      },
-      token,
-    };
-  }
-
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const { password, ...result } = user;
-      return result;
-    }
-    return null;
+    return this.generateAuthResponse(user);
   }
 
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
     
-    // Validate user credentials
-    const user = await this.validateUser(email, password);
+    const user = await this.validateCredentials(email, password);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { sub: user.id, email: user.email };
+    return this.generateAuthResponse(user);
+  }
+
+  async refreshToken(user: any) {
+    const payload = this.createJwtPayload(user);
+    return { token: this.jwtService.sign(payload) };
+  }
+
+  // =============================================
+  // PRIVATE HELPER METHODS
+  // =============================================
+
+  private async checkEmailExists(email: string): Promise<void> {
+    const existingUser = await this.userRepository.findOne({ where: { email } });
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
+  }
+
+  private async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
+
+  private async createUser(userData: Partial<User>): Promise<User> {
+    const user = this.userRepository.create(userData);
+    return this.userRepository.save(user);
+  }
+
+  private async validateCredentials(email: string, password: string): Promise<User | null> {
+    const user = await this.userRepository.findOne({ where: { email } });
+    
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return null;
+    }
+
+    return user;
+  }
+
+  private createJwtPayload(user: User): { sub: string, email: string } {
+    return { sub: user.id, email: user.email };
+  }
+
+  private generateAuthResponse(user: User) {
+    const payload = this.createJwtPayload(user);
+    const token = this.jwtService.sign(payload);
+
     return {
       user: {
-        id: user.id,
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
       },
-      token: this.jwtService.sign(payload),
-    };
-  }
-
-  async refreshToken(user: any) {
-    const payload = { sub: user.id, email: user.email };
-    return {
-      token: this.jwtService.sign(payload),
+      token,
     };
   }
 }
