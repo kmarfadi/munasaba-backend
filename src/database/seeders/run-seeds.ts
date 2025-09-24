@@ -1,189 +1,117 @@
 import { DataSource } from 'typeorm';
+import { OrganizationsSeeder } from './01-organizations.seeder';
+import { UsersSeeder } from './02-users.seeder';
+import { EventsSeeder } from './03-events.seeder';
+import { GuestsSeeder } from './04-guests.seeder';
 import { config } from 'dotenv';
-import { join } from 'path';
-import { User } from '../../modules/user/auth/entities/user.entity';
-import { Event } from '../../modules/events/event.entity';
-import { Guest } from '../../modules/guests/guest.entity';
-import * as bcrypt from 'bcryptjs';
 
+// Load environment variables
 config();
 
-const AppDataSource = new DataSource({
-  type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432'),
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'password',
-  database: process.env.DB_DATABASE || 'munasaba',
-  entities: [
-    join(__dirname, '../../modules/user/auth/entities/*.entity{.ts,.js}'),
-    join(__dirname, '../../modules/events/*.entity{.ts,.js}'),
-    join(__dirname, '../../modules/guests/*.entity{.ts,.js}'),
-  ],
-  synchronize: false,
-  logging: true,
-});
+export async function runSeeds(dataSource: DataSource): Promise<void> {
+  console.log('🌱 Starting database seeding...\n');
 
-async function runSeeds() {
   try {
-    await AppDataSource.initialize();
-    console.log('🌱 Starting database seeding...');
+    // Initialize seeders
+    const organizationsSeeder = new OrganizationsSeeder(dataSource);
+    const usersSeeder = new UsersSeeder(dataSource);
+    const eventsSeeder = new EventsSeeder(dataSource);
+    const guestsSeeder = new GuestsSeeder(dataSource);
 
-    const userRepository = AppDataSource.getRepository(User);
-    const eventRepository = AppDataSource.getRepository(Event);
-    const guestRepository = AppDataSource.getRepository(Guest);
+    // Run seeders in dependency order
+    console.log('📋 Step 1/4: Seeding Organizations...');
+    await organizationsSeeder.run();
+    
+    console.log('👥 Step 2/4: Seeding Users...');
+    await usersSeeder.run();
+    
+    console.log('🎉 Step 3/4: Seeding Events...');
+    await eventsSeeder.run();
+    
+    console.log('🎫 Step 4/4: Seeding Guests...');
+    await guestsSeeder.run();
 
-    // Create admin user
-    const adminUser = userRepository.create({
-      email: 'admin@munasaba.com',
-      password: await bcrypt.hash('admin123', 12),
-      firstName: 'Admin',
-      lastName: 'User',
-      isActive: true,
-    });
-
-    const savedAdmin = await userRepository.save(adminUser);
-    console.log('✅ Admin user created:', savedAdmin.email);
-
-    // Create demo user
-    const demoUser = userRepository.create({
-      email: 'demo@munasaba.com',
-      password: await bcrypt.hash('demo123', 12),
-      firstName: 'Demo',
-      lastName: 'User',
-      isActive: true,
-    });
-
-    const savedDemo = await userRepository.save(demoUser);
-    console.log('✅ Demo user created:', savedDemo.email);
-
-    // Create sample events
-    const sampleEvents = [
-      {
-        title: 'Tech Conference 2024',
-        description: 'Annual technology conference featuring the latest innovations',
-        startDate: new Date('2024-12-15T09:00:00Z'),
-        endDate: new Date('2024-12-15T17:00:00Z'),
-        location: 'Convention Center, Downtown',
-        category: 'Technology',
-        maxGuests: 500,
-        organizerId: savedAdmin.id,
-      },
-      {
-        title: 'Wedding Reception',
-        description: 'Celebration of love and commitment',
-        startDate: new Date('2024-12-20T18:00:00Z'),
-        endDate: new Date('2024-12-20T23:00:00Z'),
-        location: 'Grand Hotel Ballroom',
-        category: 'Wedding',
-        maxGuests: 150,
-        organizerId: savedDemo.id,
-      },
-      {
-        title: 'Birthday Party',
-        description: 'Surprise birthday celebration',
-        startDate: new Date('2024-12-25T19:00:00Z'),
-        endDate: new Date('2024-12-25T22:00:00Z'),
-        location: 'Private Residence',
-        category: 'Birthday',
-        maxGuests: 50,
-        organizerId: savedDemo.id,
-      },
-    ];
-
-    const savedEvents: Event[] = [];
-    for (const eventData of sampleEvents) {
-      const event = eventRepository.create(eventData);
-      const savedEvent = await eventRepository.save(event);
-      savedEvents.push(savedEvent);
-      console.log('✅ Event created:', savedEvent.title);
-    }
-
-    // Create sample guests
-    const sampleGuests = [
-      // Tech Conference guests
-      {
-        firstName: 'John',
-        lastName: 'Doe',
-        email: 'john.doe@email.com',
-        phone: '+1234567890',
-        eventId: savedEvents[0].id,
-        notes: 'VIP attendee',
-        checkedIn: true,
-        checkInTime: new Date('2024-12-15T08:45:00Z'),
-      },
-      {
-        firstName: 'Jane',
-        lastName: 'Smith',
-        email: 'jane.smith@email.com',
-        phone: '+1234567891',
-        eventId: savedEvents[0].id,
-        notes: 'Speaker',
-        checkedIn: true,
-        checkInTime: new Date('2024-12-15T08:30:00Z'),
-      },
-      {
-        firstName: 'Bob',
-        lastName: 'Johnson',
-        email: 'bob.johnson@email.com',
-        phone: '+1234567892',
-        eventId: savedEvents[0].id,
-        notes: 'Media representative',
-        checkedIn: false,
-      },
-      // Wedding guests
-      {
-        firstName: 'Alice',
-        lastName: 'Brown',
-        email: 'alice.brown@email.com',
-        phone: '+1234567893',
-        eventId: savedEvents[1].id,
-        notes: 'Bridesmaid',
-        checkedIn: true,
-        checkInTime: new Date('2024-12-20T17:30:00Z'),
-      },
-      {
-        firstName: 'Charlie',
-        lastName: 'Wilson',
-        email: 'charlie.wilson@email.com',
-        phone: '+1234567894',
-        eventId: savedEvents[1].id,
-        notes: 'Groomsman',
-        checkedIn: true,
-        checkInTime: new Date('2024-12-20T17:45:00Z'),
-      },
-      // Birthday party guests
-      {
-        firstName: 'Diana',
-        lastName: 'Davis',
-        email: 'diana.davis@email.com',
-        phone: '+1234567895',
-        eventId: savedEvents[2].id,
-        notes: 'Close friend',
-        checkedIn: false,
-      },
-    ];
-
-    for (const guestData of sampleGuests) {
-      const guest = guestRepository.create(guestData);
-      await guestRepository.save(guest);
-      console.log('✅ Guest created:', `${guest.firstName} ${guest.lastName}`);
-    }
-
-    console.log('🎉 Database seeding completed successfully!');
-    console.log('\n📊 Summary:');
-    console.log(`- Users: 2 (admin@munasaba.com, demo@munasaba.com)`);
-    console.log(`- Events: ${savedEvents.length}`);
-    console.log(`- Guests: ${sampleGuests.length}`);
-    console.log('\n🔑 Login credentials:');
-    console.log('Admin: admin@munasaba.com / admin123');
-    console.log('Demo: demo@munasaba.com / demo123');
-
+    console.log('\n✅ Database seeding completed successfully!');
   } catch (error) {
-    console.error('❌ Error during seeding:', error);
-  } finally {
-    await AppDataSource.destroy();
+    console.error('\n❌ Database seeding failed:', error);
+    throw error;
   }
 }
 
-runSeeds();
+export async function clearSeeds(dataSource: DataSource): Promise<void> {
+  console.log('🗑️ Clearing all seeded data...\n');
+
+  try {
+    // Initialize seeders
+    const guestsSeeder = new GuestsSeeder(dataSource);
+    const eventsSeeder = new EventsSeeder(dataSource);
+    const usersSeeder = new UsersSeeder(dataSource);
+    const organizationsSeeder = new OrganizationsSeeder(dataSource);
+
+    // Clear seeders in reverse dependency order
+    console.log('🎫 Step 1/4: Clearing Guests...');
+    await guestsSeeder.clear();
+    
+    console.log('🎉 Step 2/4: Clearing Events...');
+    await eventsSeeder.clear();
+    
+    console.log('👥 Step 3/4: Clearing Users...');
+    await usersSeeder.clear();
+    
+    console.log('📋 Step 4/4: Clearing Organizations...');
+    await organizationsSeeder.clear();
+
+    console.log('\n✅ Database clearing completed successfully!');
+  } catch (error) {
+    console.error('\n❌ Database clearing failed:', error);
+    throw error;
+  }
+}
+
+// Main execution block for running as standalone script
+async function main() {
+  const dataSource = new DataSource({
+    type: 'postgres',
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || '5432'),
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    entities: [
+      'src/modules/**/entities/*.entity{.ts,.js}',
+      'src/modules/**/*.entity{.ts,.js}',
+    ],
+    synchronize: false,
+    logging: process.env.NODE_ENV === 'development',
+  });
+
+  try {
+    console.log('🔌 Connecting to database...');
+    await dataSource.initialize();
+    console.log('✅ Database connected successfully!\n');
+
+    // Check command line arguments
+    const args = process.argv.slice(2);
+    if (args.includes('--clear')) {
+      await clearSeeds(dataSource);
+    } else {
+      await runSeeds(dataSource);
+    }
+  } catch (error) {
+    console.error('❌ Database operation failed:', error);
+    process.exit(1);
+  } finally {
+    if (dataSource.isInitialized) {
+      await dataSource.destroy();
+      console.log('🔌 Database connection closed.');
+    }
+  }
+}
+
+// Run main function if this file is executed directly
+if (require.main === module) {
+  main().catch((error) => {
+    console.error('❌ Unhandled error:', error);
+    process.exit(1);
+  });
+}
